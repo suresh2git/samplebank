@@ -1,0 +1,193 @@
+openapi: 3.0.2
+info:
+  title: Accounts MS
+  description: This is the Accounts MS. It provides RESTful operations for Accounts data.
+  version: 1.0.0-oas3
+  contact:
+    name: suresh V
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+
+tags:
+  - name: Account Service
+    description: Provides crud operations related to accounts.
+paths:
+  /accounts:
+    get:
+      tags:
+        - Account Service
+      summary: reads a account's data
+      operationId: getAccounts
+      description: >-
+        This operation provides a view of all the accounts data in JSON.
+      responses:
+        '200':
+          description: successful. Body contains the list of accounts.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+        '404':
+          description: There is no accounts present in db.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+    post:
+      tags:
+        - Account Service
+      summary: adds a new account
+      operationId: addAccount
+      description: Add a new account in the db
+      responses:
+        '201':
+          description: Created. Body contains the newly created account.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '500':
+          description: Internal Server error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Account'
+        description: The new account data in JSON format
+        required: true
+  '/accounts/{accountId}':
+    get:
+      tags:
+        - Account Service
+      summary: get account by id
+      operationId: getAccount
+      description: get account present in db by id
+      parameters:
+        - in: path
+          name: accountId
+          description: the id of the account
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success. Body contains the given id account details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '404':
+          description: Account Not Found with given id.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '500':
+          description: Internal Server Error
+    put:
+      tags:
+        - Account Service
+      summary: update existing account
+      operationId: updateAccount
+      description: Updates an existing account with new data
+      parameters:
+        - in: path
+          name: accountId
+          description: the id of the account to update
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success. Body contains updated account details.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '404':
+          description: Account Not Found with given id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '500':
+          description: Internal Server Error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Account'
+        description: the updatable account data in JSON format
+        required: true
+    delete:
+      tags:
+        - Account Service
+      summary: delete an existing account
+      operationId: deleteAccount
+      description: Deletes an existing account in the db.
+      parameters:
+        - in: path
+          name: accountId
+          description: the id of the account to delete
+          required: true
+          schema:
+            type: integer
+      responses:
+        '204':
+          description: The account was deleted
+        '404':
+          description: Customer Not Found with given id
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiErrorResponse'
+        '500':
+          description: Internal Server Error
+
+servers:
+  - url: 'http://localhost:8080/api'
+components:
+  schemas:
+    Account:
+      x-java-class-annotations:
+        - "@javax.persistence.Entity"
+      type: object
+      properties:
+        accountId:
+          x-java-field-annotations:
+            - '@javax.persistence.Id'
+            - '@javax.persistence.GeneratedValue(strategy = javax.persistence.GenerationType.IDENTITY)'
+          type: integer
+        accountName:
+          type: string
+        accountHolderName:
+          type: string
+        ifsc:
+          type: string
+        currency:
+          type: string
+        country:
+          type: string
+        balance:
+          type: number
+      example:
+        accountId: 1
+        accountName: "saving"
+        accountHolderName: "name1"
+        ifsc: "12345"
+        currency: "rupees"
+        country: "IND"
+        balance: 10000.00
+
+    ApiErrorResponse:
+      type: object
+      properties:
+        message:
+          type: string
+        statusCode:
+          type: integer
+        path:
+          type: string

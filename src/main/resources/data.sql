@@ -1,0 +1,2 @@
+Insert into account(account_id,account_name,account_holder_name,ifsc,currency,country,balance) values(1,'saving','name1','11111','rupees','IND',10000.00);
+Insert into account(account_id,account_name,account_holder_name,ifsc,currency,country,balance) values(2,'saving','name2','22222','rupees','IND',20000.00);
